@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
-import type { JSONContent } from "@tiptap/core";
 import ArticleContent from "@/components/article/ArticleContent";
 import CategoryBadge from "@/components/ui/CategoryBadge";
 import { getArticleBySlug } from "@/server/queries/articles";
@@ -52,7 +51,7 @@ export default async function ArticlePage({ params }: Props) {
           {article.category.name}
         </Link>
         <span>/</span>
-        <span className="text-ink-soft truncate max-w-[200px]">{article.title}</span>
+        <span className="text-ink-soft truncate max-w-50">{article.title}</span>
       </nav>
 
       {/* Category + meta */}
@@ -84,7 +83,7 @@ export default async function ArticlePage({ params }: Props) {
       <div className="h-px bg-line mb-8" />
 
       {/* Article content */}
-      <ArticleContent content={article.content as JSONContent} />
+      <ArticleContent content={article.content as Parameters<typeof ArticleContent>[0]["content"]} />
 
       {/* Footer meta */}
       <div className="mt-12 pt-6 border-t border-line flex items-center justify-between">

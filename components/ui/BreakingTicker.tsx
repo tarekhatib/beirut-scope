@@ -13,7 +13,7 @@ export default function BreakingTicker({ updates }: Props) {
 
   return (
     <div className="flex items-stretch overflow-hidden border-b border-line" style={{ backgroundColor: "var(--accent)" }}>
-      <div className="flex-shrink-0 flex items-center px-4 py-2 bg-black/20 z-10">
+      <div className="shrink-0 flex items-center px-4 py-2 bg-black/20 z-10">
         <span className="text-white text-xs font-bold uppercase tracking-widest whitespace-nowrap">
           {hasBreaking ? "⚡ Breaking" : "Latest"}
         </span>
