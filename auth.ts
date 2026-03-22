@@ -13,7 +13,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           credentials.email === process.env.ADMIN_EMAIL &&
           credentials.password === process.env.ADMIN_PASSWORD
         ) {
-          return { id: "1", email: process.env.ADMIN_EMAIL, name: "Admin" };
+          return { id: "1", email: process.env.ADMIN_EMAIL as string, name: "Admin" };
         }
         return null;
       },

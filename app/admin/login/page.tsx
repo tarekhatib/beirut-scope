@@ -36,7 +36,7 @@ export default function LoginPage() {
     <div className="min-h-screen flex items-center justify-center bg-surface px-4">
       <div className="w-full max-w-sm">
         <div className="flex justify-center mb-8">
-          <Image src="/logo.svg" alt="Beirut Scope" width={160} height={40} />
+          <Image src="/logo.svg" alt="Beirut Scope" width={160} height={40} className="dark:invert" />
         </div>
 
         <div className="bg-canvas border border-line rounded-xl p-8 shadow-sm">
