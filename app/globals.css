@@ -83,3 +83,7 @@ body {
   --tw-prose-captions:    var(--text-muted);
   --tw-prose-hr:          var(--border);
 }
+
+[dir="auto"] {
+  text-align: start;
+}
