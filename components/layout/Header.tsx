@@ -17,7 +17,7 @@ export default async function Header() {
               width={392}
               height={100}
               priority
-              className="h-11 w-auto dark:invert"
+              className="h-6 w-auto dark:invert sm:h-11"
             />
           </Link>
 

@@ -67,7 +67,7 @@ label,
 summary,
 [role="button"],
 [role="switch"] {
-  cursor: pointer;
+  cursor: pointer !important;
 }
 
 @keyframes ticker-scroll {
@@ -76,18 +76,16 @@ summary,
 }
 
 .ticker-track {
-  animation: ticker-scroll 40s linear infinite;
+  animation: ticker-scroll 14s linear infinite;
+}
+
+@media (min-width: 640px) {
+  .ticker-track {
+    animation-duration: 22s;
+  }
 }
 
 .ticker-track:hover {
-  animation-play-state: paused;
-}
-
-.ticker-track-fast {
-  animation: ticker-scroll 22s linear infinite;
-}
-
-.ticker-track-fast:hover {
   animation-play-state: paused;
 }
 
