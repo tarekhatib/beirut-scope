@@ -34,15 +34,11 @@ model Article {
 }
 
 model QuickUpdate {
-  id        Int        @id @default(autoincrement())
-  text      String
-  type      UpdateType @default(NORMAL)
-  createdAt DateTime   @default(now())
+  id         Int      @id @default(autoincrement())
+  textEn     String
+  textAr     String
+  isBreaking Boolean  @default(false)
+  createdAt  DateTime @default(now())
 
   @@index([createdAt])
-}
-
-enum UpdateType {
-  BREAKING
-  NORMAL
 }

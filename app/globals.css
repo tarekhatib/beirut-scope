@@ -60,6 +60,16 @@ body {
   font-family: system-ui, -apple-system, sans-serif;
 }
 
+button:not(:disabled),
+a,
+select,
+label,
+summary,
+[role="button"],
+[role="switch"] {
+  cursor: pointer;
+}
+
 @keyframes ticker-scroll {
   0%   { transform: translateX(0); }
   100% { transform: translateX(-50%); }
@@ -70,6 +80,14 @@ body {
 }
 
 .ticker-track:hover {
+  animation-play-state: paused;
+}
+
+.ticker-track-fast {
+  animation: ticker-scroll 22s linear infinite;
+}
+
+.ticker-track-fast:hover {
   animation-play-state: paused;
 }
 

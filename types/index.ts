@@ -5,5 +5,3 @@ export type { Article, Category, QuickUpdate };
 export type ArticleWithCategory = Article & {
   category: Category;
 };
-
-export type UpdateType = "BREAKING" | "NORMAL";

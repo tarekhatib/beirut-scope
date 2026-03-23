@@ -17,11 +17,31 @@ function img(seed: number) {
 }
 
 const quickUpdates = [
-  { text: "Lebanese government approves new economic reform package amid ongoing negotiations with the IMF", type: "BREAKING" as const },
-  { text: "Beirut weather: heavy rain expected through the weekend — coastal flooding warnings in effect", type: "NORMAL" as const },
-  { text: "Central Bank announces emergency measures to stabilize the Lebanese pound exchange rate", type: "BREAKING" as const },
-  { text: "Parliamentary session postponed to next week following coalition disagreements", type: "NORMAL" as const },
-  { text: "Lebanese national football team qualifies for next round of World Cup qualifiers", type: "NORMAL" as const },
+  {
+    textEn: "Lebanese government approves new economic reform package amid ongoing negotiations with the IMF",
+    textAr: "الحكومة اللبنانية تُقرّ حزمة إصلاحات اقتصادية جديدة في خضمّ المفاوضات الجارية مع صندوق النقد الدولي",
+    isBreaking: true,
+  },
+  {
+    textEn: "Beirut weather: heavy rain expected through the weekend — coastal flooding warnings in effect",
+    textAr: "طقس بيروت: أمطار غزيرة متوقعة حتى نهاية الأسبوع — تحذيرات من فيضانات على طول الساحل",
+    isBreaking: false,
+  },
+  {
+    textEn: "Central Bank announces emergency measures to stabilize the Lebanese pound exchange rate",
+    textAr: "مصرف لبنان يُعلن إجراءات طارئة لتثبيت سعر صرف الليرة اللبنانية",
+    isBreaking: true,
+  },
+  {
+    textEn: "Parliamentary session postponed to next week following coalition disagreements",
+    textAr: "تأجيل جلسة البرلمان إلى الأسبوع المقبل على خلفية خلافات داخل التحالف الحكومي",
+    isBreaking: false,
+  },
+  {
+    textEn: "Lebanese national football team qualifies for next round of World Cup qualifiers",
+    textAr: "المنتخب اللبناني لكرة القدم يتأهل إلى الدور المقبل من تصفيات كأس العالم",
+    isBreaking: false,
+  },
 ];
 
 const articles = [
@@ -121,7 +141,7 @@ async function main() {
   console.log("Creating quick updates...");
   for (const u of quickUpdates) {
     await prisma.quickUpdate.create({ data: u });
-    console.log(`  ✓ [${u.type}] ${u.text.slice(0, 60)}...`);
+    console.log(`  ✓ [${u.isBreaking ? "BREAKING" : "NORMAL"}] ${u.textEn.slice(0, 60)}...`);
   }
 
   const categories = await prisma.category.findMany();
