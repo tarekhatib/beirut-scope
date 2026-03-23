@@ -104,7 +104,7 @@ const icons = {
   blockquote:  "M3 21c3 0 7-1 7-8V5c0-1.25-.756-2.017-2-2H4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V20c0 1 0 1 1 1zm12 0c3 0 7-1 7-8V5c0-1.25-.757-2.017-2-2h-4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2h.75c0 2.25.25 4-2.75 4v3c0 1 0 1 1 1z",
   link:        "M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71",
   image:       "M21 15l-5-5L5 21M3 3h18v18H3zM8.5 10a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z",
-  embed:       "M4 6l8 6-8 6V6zM14 18h6M14 6h6M14 12h4",
+  embed:       "M8 6L3 12L8 18M16 6L21 12L16 18M14 4L10 20",
   divider:     "M5 12h14",
 };
 
@@ -343,9 +343,9 @@ export default function ArticleEditor({ categories, article }: Props) {
 
       <div>
         <label className="block text-sm font-medium text-ink mb-1">Content</label>
-        <div className="rounded-lg border border-line bg-canvas overflow-hidden">
+        <div className="rounded-lg border border-line bg-canvas">
           {/* Toolbar */}
-          <div className="flex flex-wrap items-center gap-0.5 px-2 py-1.5 border-b border-line bg-surface">
+          <div className="sticky top-0 z-20 flex flex-wrap items-center gap-0.5 px-2 py-1.5 border-b border-line bg-header rounded-t-lg">
             <ToolbarButton title="Bold" onClick={() => editor?.chain().focus().toggleBold().run()} active={editor?.isActive("bold")}>
               <Icon d={icons.bold} />
             </ToolbarButton>
@@ -386,7 +386,7 @@ export default function ArticleEditor({ categories, article }: Props) {
               {editorUploading ? <span className="text-xs">…</span> : <Icon d={icons.image} />}
             </ToolbarButton>
             <ToolbarButton title="Embed (YouTube, PDF, URL…)" onClick={handleEmbed}>
-              <span className="text-xs font-mono font-bold">{"<>"}</span>
+              <Icon d={icons.embed} />
             </ToolbarButton>
             <ToolbarButton title="Divider" onClick={() => editor?.chain().focus().setHorizontalRule().run()}>
               <Icon d={icons.divider} />

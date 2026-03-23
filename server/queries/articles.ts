@@ -40,8 +40,8 @@ export async function getArticleBySlug(slug: string): Promise<ArticleWithCategor
   return prisma.article.findUnique({ where: { slug }, include: articleInclude });
 }
 
-export async function getFeaturedArticle(): Promise<ArticleWithCategory | null> {
-  return prisma.article.findFirst({
+export async function getFeaturedArticles(): Promise<ArticleWithCategory[]> {
+  return prisma.article.findMany({
     where: { isFeatured: true },
     include: articleInclude,
     orderBy: { publishedAt: "desc" },
