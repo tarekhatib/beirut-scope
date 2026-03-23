@@ -23,12 +23,10 @@ export default function FeaturedSlideshow({ articles }: Props) {
   // Tracks which slide is partially in view during a drag (for snap-back)
   const draggingIncoming = useRef<{ idx: number; side: 1 | -1 } | null>(null);
 
-  // Initial layout: slide 0 at center, others stacked right (will be repositioned by go())
   const initPositions = () => {
     slideEls.current.forEach((el, i) => {
       if (!el) return;
       el.style.transition = "none";
-      // Simple linear: 0 at center, rest to the right
       el.style.transform = `translateX(${i * 100}%)`;
     });
   };
@@ -38,27 +36,20 @@ export default function FeaturedSlideshow({ articles }: Props) {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  /**
-   * dir = +1 → going forward (next): incoming enters from RIGHT, outgoing exits LEFT
-   * dir = -1 → going backward (prev): incoming enters from LEFT, outgoing exits RIGHT
-   * fromDrag = true → incoming slide is already partially in view, skip pre-positioning
-   */
   const go = (c: number, dir: 1 | -1, fromDrag = false) => {
     const prevC = currentRef.current;
     if (c === prevC) return;
     currentRef.current = c;
 
     if (!fromDrag) {
-      // Instantly place incoming slide on the correct off-screen side
       const el = slideEls.current[c];
       if (el) {
         el.style.transition = "none";
         el.style.transform = `translateX(${dir * 100}%)`;
-        el.getBoundingClientRect(); // force reflow so the transition fires
+        el.getBoundingClientRect();
       }
     }
 
-    // Animate: incoming → center, outgoing → off-screen in opposite direction
     slideEls.current.forEach((el, i) => {
       if (!el) return;
       if (i === c) {
@@ -68,16 +59,14 @@ export default function FeaturedSlideshow({ articles }: Props) {
         el.style.transition = SNAP;
         el.style.transform = `translateX(${-dir * 100}%)`;
       }
-      // Other slides: leave where they are (off-screen, not visible)
     });
 
-    setCurrent(c); // triggers re-render for dots + text only
+    setCurrent(c);
   };
 
   const prev = () => go((currentRef.current - 1 + n) % n, -1);
   const next = () => go((currentRef.current + 1) % n, +1);
 
-  // Stable ref so the interval always calls the latest next()
   const nextRef = useRef(next);
   useEffect(() => { nextRef.current = next; });
 
@@ -89,13 +78,10 @@ export default function FeaturedSlideshow({ articles }: Props) {
     return () => clearInterval(id);
   }, [n]);
 
-  // ── Touch handlers — direct DOM, no setState during drag ──────────────────
-
   const onTouchStart = (e: React.TouchEvent) => {
     touchStartX.current = e.touches[0].clientX;
     pausedRef.current = true;
     draggingIncoming.current = null;
-    // Kill in-progress transitions so drag is instant
     slideEls.current.forEach((el) => { if (el) el.style.transition = "none"; });
   };
 
@@ -106,18 +92,15 @@ export default function FeaturedSlideshow({ articles }: Props) {
     rafRef.current = requestAnimationFrame(() => {
       const c = currentRef.current;
 
-      // Move current slide with finger
       const currEl = slideEls.current[c];
       if (currEl) currEl.style.transform = `translateX(${dragPx}px)`;
 
       if (dragPx > 0) {
-        // Swiping right → revealing PREV (enters from left at -100%)
         const idx = (c - 1 + n) % n;
         draggingIncoming.current = { idx, side: -1 };
         const el = slideEls.current[idx];
         if (el) el.style.transform = `translateX(calc(-100% + ${dragPx}px))`;
       } else if (dragPx < 0) {
-        // Swiping left → revealing NEXT (enters from right at +100%)
         const idx = (c + 1) % n;
         draggingIncoming.current = { idx, side: 1 };
         const el = slideEls.current[idx];
@@ -134,14 +117,12 @@ export default function FeaturedSlideshow({ articles }: Props) {
     pausedRef.current = false;
 
     if (Math.abs(diff) > 50) {
-      // Complete the swipe — incoming slide is already partially in view
       if (diff > 0) {
         go((currentRef.current - 1 + n) % n, -1, true);
       } else {
         go((currentRef.current + 1) % n, +1, true);
       }
     } else {
-      // Snap back: current returns to center, incoming returns off-screen
       const c = currentRef.current;
       const currEl = slideEls.current[c];
       if (currEl) { currEl.style.transition = SNAP; currEl.style.transform = "translateX(0%)"; }
@@ -158,13 +139,12 @@ export default function FeaturedSlideshow({ articles }: Props) {
 
   return (
     <div
-      className="group grid grid-cols-1 lg:grid-cols-5 bg-card rounded-xl overflow-hidden border border-line hover:shadow-lg transition-shadow"
+      className="group h-full grid grid-cols-1 lg:grid-cols-5 bg-card rounded-xl overflow-hidden border border-line hover:shadow-lg transition-shadow"
       onMouseEnter={() => { pausedRef.current = true; }}
       onMouseLeave={() => { pausedRef.current = false; }}
     >
-      {/* ── Image carousel ───────────────────────────────────────────────── */}
       <div
-        className="relative lg:col-span-3 aspect-video lg:aspect-auto overflow-hidden select-none"
+        className="relative lg:col-span-3 aspect-video lg:aspect-auto lg:min-h-64 overflow-hidden select-none"
         style={{ touchAction: "pan-y" }}
         onTouchStart={onTouchStart}
         onTouchMove={onTouchMove}
@@ -175,7 +155,6 @@ export default function FeaturedSlideshow({ articles }: Props) {
             key={a.id}
             ref={(el) => { slideEls.current[i] = el; }}
             className="absolute inset-0"
-            // No style prop for transform — useLayoutEffect + go() own it
           >
             <Link href={`/${a.category.slug}/${a.slug}`} className="block w-full h-full" draggable={false}>
               {a.coverImage ? (
@@ -237,7 +216,6 @@ export default function FeaturedSlideshow({ articles }: Props) {
         )}
       </div>
 
-      {/* ── Text — re-renders only when setCurrent fires ──────────────────── */}
       <div className="lg:col-span-2 flex flex-col justify-center p-4 sm:p-6 lg:p-8 gap-3 lg:gap-4">
         <div className="flex items-center gap-3">
           <CategoryBadge name={articles[current].category.name} slug={articles[current].category.slug} />
