@@ -8,7 +8,7 @@ import ViewTracker from "@/components/article/ViewTracker";
 import CategoryBadge from "@/components/ui/CategoryBadge";
 import ArticleCard from "@/components/ui/ArticleCard";
 import { getArticleBySlug, getRelatedArticles } from "@/server/queries/articles";
-import { formatDate } from "@/lib/utils";
+import { formatDate, readingTime } from "@/lib/utils";
 
 export const revalidate = 60;
 
@@ -80,6 +80,8 @@ export default async function ArticlePage({ params }: Props) {
       <div className="flex flex-wrap items-center gap-3 mb-4">
         <CategoryBadge name={article.category.name} slug={article.category.slug} />
         <time className="text-xs text-ink-muted">{formatDate(article.publishedAt)}</time>
+        <span className="text-xs text-ink-muted">·</span>
+        <span className="text-xs text-ink-muted">{readingTime(article.content)} min read</span>
       </div>
 
       <h1 className="text-3xl sm:text-4xl font-bold text-ink leading-tight mb-6">

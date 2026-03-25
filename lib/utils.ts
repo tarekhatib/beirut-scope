@@ -9,6 +9,19 @@ export function slugify(text: string): string {
     .replace(/^-+|-+$/g, "");
 }
 
+function extractText(node: unknown): string {
+  if (!node || typeof node !== "object") return "";
+  const n = node as Record<string, unknown>;
+  if (n.type === "text" && typeof n.text === "string") return n.text;
+  if (Array.isArray(n.content)) return (n.content as unknown[]).map(extractText).join(" ");
+  return "";
+}
+
+export function readingTime(content: unknown): number {
+  const words = extractText(content).trim().split(/\s+/).filter(Boolean).length;
+  return Math.max(1, Math.round(words / 200));
+}
+
 export function formatDate(date: Date | string): string {
   return new Date(date).toLocaleDateString("en-US", {
     year: "numeric",

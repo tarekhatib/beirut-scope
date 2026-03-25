@@ -164,7 +164,7 @@ export default function FeaturedSlideshow({ articles }: Props) {
                   fill
                   sizes="(max-width: 1024px) 100vw, 60vw"
                   className="object-cover pointer-events-none"
-                  priority
+                  priority={i === 0}
                   draggable={false}
                 />
               ) : (

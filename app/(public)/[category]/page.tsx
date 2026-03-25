@@ -17,6 +17,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title: category.name,
     description: `Latest ${category.name} news from Beirut Scope.`,
+    openGraph: {
+      title: `${category.name} | Beirut Scope`,
+      description: `Latest ${category.name} news from Beirut Scope.`,
+      type: "website",
+    },
   };
 }
 
