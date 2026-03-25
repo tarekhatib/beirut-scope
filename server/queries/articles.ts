@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import { Prisma } from "@prisma/client";
 import type { ArticleWithCategory } from "@/types";
 
 const articleInclude = { category: true } as const;
@@ -62,7 +63,7 @@ export async function getRelatedArticles(categorySlug: string, excludeSlug: stri
 export async function searchArticles(query: string, limit = 20): Promise<ArticleWithCategory[]> {
   const pattern = `%${query}%`;
   const rows = await prisma.$queryRaw<Array<{
-    id: number; title: string; slug: string; content: unknown;
+    id: number; title: string; slug: string; content: Prisma.JsonValue;
     coverImage: string | null; isFeatured: boolean; isDraft: boolean;
     clicks: number; views: number; publishedAt: Date; updatedAt: Date; categoryId: number;
     cat_id: number; cat_name: string; cat_slug: string; cat_createdAt: Date; cat_updatedAt: Date;
