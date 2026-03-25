@@ -45,6 +45,11 @@ export default async function ArticlesPage() {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
                     <p className="text-sm font-medium text-ink truncate">{article.title}</p>
+                    {article.isDraft && (
+                      <span className="px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide bg-ink/10 text-ink-soft rounded">
+                        Draft
+                      </span>
+                    )}
                   </div>
                   <p className="text-xs text-ink-soft mt-0.5">
                     {article.category.name} · {formatDate(article.publishedAt)} · {article.clicks} clicks · {article.views} views

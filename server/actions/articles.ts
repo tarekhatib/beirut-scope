@@ -10,6 +10,7 @@ type ArticlePayload = {
   categoryId: number;
   coverImage?: string;
   isFeatured?: boolean;
+  isDraft?: boolean;
   publishedAt?: Date;
 };
 
@@ -29,6 +30,7 @@ export async function createArticle(payload: ArticlePayload) {
       categoryId: payload.categoryId,
       coverImage: payload.coverImage ?? null,
       isFeatured: payload.isFeatured ?? false,
+      isDraft: payload.isDraft ?? false,
       publishedAt: payload.publishedAt ?? new Date(),
     },
     include: { category: true },
@@ -55,6 +57,7 @@ export async function updateArticle(
   if (payload.categoryId !== undefined) data.categoryId = payload.categoryId;
   if (payload.coverImage !== undefined) data.coverImage = payload.coverImage;
   if (payload.isFeatured !== undefined) data.isFeatured = payload.isFeatured;
+  if (payload.isDraft !== undefined) data.isDraft = payload.isDraft;
   if (payload.publishedAt !== undefined) data.publishedAt = payload.publishedAt;
 
   const article = await prisma.article.update({

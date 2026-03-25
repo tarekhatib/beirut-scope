@@ -30,6 +30,7 @@ export default async function EditArticlePage({
           categoryId: article.categoryId,
           coverImage: article.coverImage,
           isFeatured: article.isFeatured,
+          isDraft: article.isDraft,
         }}
       />
     </div>

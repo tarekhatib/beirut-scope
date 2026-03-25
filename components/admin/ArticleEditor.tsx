@@ -27,6 +27,7 @@ interface Props {
     categoryId: number;
     coverImage: string | null;
     isFeatured: boolean;
+    isDraft: boolean;
   };
 }
 
@@ -144,6 +145,7 @@ export default function ArticleEditor({ categories, article }: Props) {
   const [categoryId, setCategoryId] = useState(article?.categoryId ?? categories[0]?.id ?? 0);
   const [coverImage, setCoverImage] = useState(article?.coverImage ?? "");
   const [isFeatured, setIsFeatured] = useState(article?.isFeatured ?? false);
+  const [pendingAction, setPendingAction] = useState<"draft" | "publish" | null>(null);
   const [error, setError] = useState("");
   const [isDirty, setIsDirty] = useState(false);
   const [, setTick] = useState(0);
@@ -247,26 +249,39 @@ export default function ArticleEditor({ categories, article }: Props) {
     }
   }
 
-  function handleSubmit(e: React.SyntheticEvent<HTMLFormElement>) {
-    e.preventDefault();
+  function save(asDraft: boolean) {
     if (!editor) return;
+    if (!title.trim()) { setError("Title is required."); return; }
     setError("");
     const content = JSON.parse(JSON.stringify(editor.getJSON()));
+    setPendingAction(asDraft ? "draft" : "publish");
 
     startTransition(async () => {
       try {
         if (article) {
-          await updateArticle(article.id, { title, content, categoryId: Number(categoryId), coverImage: coverImage || undefined, isFeatured });
+          await updateArticle(article.id, {
+            title, content, categoryId: Number(categoryId),
+            coverImage: coverImage || undefined, isFeatured,
+            isDraft: asDraft,
+            ...(article.isDraft && !asDraft && { publishedAt: new Date() }),
+          });
         } else {
-          await createArticle({ title, content, categoryId: Number(categoryId), coverImage: coverImage || undefined, isFeatured });
+          await createArticle({ title, content, categoryId: Number(categoryId), coverImage: coverImage || undefined, isFeatured, isDraft: asDraft });
         }
         setIsDirty(false);
         router.push("/admin/articles");
         router.refresh();
       } catch (err) {
         setError(err instanceof Error ? err.message : "Something went wrong.");
+      } finally {
+        setPendingAction(null);
       }
     });
+  }
+
+  function handleSubmit(e: React.SyntheticEvent<HTMLFormElement>) {
+    e.preventDefault();
+    save(false);
   }
 
   return (
@@ -407,7 +422,19 @@ export default function ArticleEditor({ categories, article }: Props) {
           disabled={isPending}
           className="px-5 py-2 bg-accent text-white text-sm font-semibold rounded-lg hover:bg-accent/90 transition-colors disabled:opacity-50"
         >
-          {isPending ? "Saving…" : article ? "Save changes" : "Publish article"}
+          {pendingAction === "publish"
+            ? "Saving…"
+            : article
+              ? article.isDraft ? "Publish Now" : "Save Changes"
+              : "Publish Article"}
+        </button>
+        <button
+          type="button"
+          disabled={isPending}
+          onClick={() => save(true)}
+          className="px-5 py-2 text-sm font-semibold rounded-lg border border-line text-ink-soft hover:text-ink hover:border-accent transition-colors disabled:opacity-50"
+        >
+          {pendingAction === "draft" ? "Saving…" : "Save as Draft"}
         </button>
         <button
           type="button"
