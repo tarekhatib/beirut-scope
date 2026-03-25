@@ -2,12 +2,12 @@ import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 
 async function getStats() {
-  const [totalArticles, featuredArticles, totalUpdates, totalCategories, recentArticles] =
-    await Promise.all([
+  const [totalArticles, featuredArticles, totalUpdates, agg, recentArticles] =
+    await prisma.$transaction([
       prisma.article.count(),
       prisma.article.count({ where: { isFeatured: true } }),
       prisma.quickUpdate.count(),
-      prisma.category.count(),
+      prisma.article.aggregate({ _sum: { views: true, clicks: true } }),
       prisma.article.findMany({
         orderBy: { publishedAt: "desc" },
         take: 5,
@@ -15,18 +15,20 @@ async function getStats() {
       }),
     ]);
 
-  return { totalArticles, featuredArticles, totalUpdates, totalCategories, recentArticles };
+  const totalViews = agg._sum?.views ?? 0;
+  const totalClicks = agg._sum?.clicks ?? 0;
+  return { totalArticles, featuredArticles, totalUpdates, totalViews, totalClicks, recentArticles };
 }
 
 export default async function AdminDashboard() {
-  const { totalArticles, featuredArticles, totalUpdates, totalCategories, recentArticles } =
+  const { totalArticles, featuredArticles, totalViews, totalClicks, recentArticles } =
     await getStats();
 
   const stats = [
     { label: "Total Articles", value: totalArticles, href: "/admin/articles" },
     { label: "Featured", value: featuredArticles, href: "/admin/articles" },
-    { label: "Quick Updates", value: totalUpdates, href: "/admin/updates" },
-    { label: "Categories", value: totalCategories, href: null },
+    { label: "Total Clicks", value: totalClicks.toLocaleString(), href: "/admin/articles" },
+    { label: "Total Views", value: totalViews.toLocaleString(), href: "/admin/articles" },
   ];
 
   return (

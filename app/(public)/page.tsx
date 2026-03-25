@@ -12,7 +12,7 @@ export const revalidate = 60;
 export default async function HomePage() {
   const [breakingUpdates, sidebarUpdates, featuredArticles, latest, categories] = await Promise.all([
     getBreakingUpdates(10),
-    getQuickUpdates(20),
+    getQuickUpdates(2),
     getFeaturedArticles(),
     getLatestArticles(6),
     getCategories(),
@@ -32,7 +32,7 @@ export default async function HomePage() {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-14">
 
         {(featuredArticles.length > 0 || sidebarUpdates.length > 0) && (
-          <section className="flex flex-col lg:flex-row gap-5 items-stretch">
+          <section className="flex flex-col lg:flex-row gap-5 lg:h-110">
             {sidebarUpdates.length > 0 && (
               <div className="order-2 lg:order-1 lg:w-72 xl:w-80 shrink-0">
                 <QuickUpdatesSidebar updates={sidebarUpdates} />

@@ -26,7 +26,7 @@ export default function QuickUpdatesSidebar({ updates }: Props) {
         <h2 className="text-xs font-bold uppercase tracking-wider text-ink">Live Updates</h2>
       </div>
 
-      <div className="flex-1 overflow-y-auto divide-y divide-line min-h-0">
+      <div className="divide-y divide-line">
         {updates.map((update) => (
           <div key={update.id} className="px-4 py-3">
             <div className="flex items-center gap-2 mb-1.5 flex-wrap">

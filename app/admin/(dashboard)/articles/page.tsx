@@ -47,7 +47,7 @@ export default async function ArticlesPage() {
                     <p className="text-sm font-medium text-ink truncate">{article.title}</p>
                   </div>
                   <p className="text-xs text-ink-soft mt-0.5">
-                    {article.category.name} · {formatDate(article.publishedAt)} · {article.views} views
+                    {article.category.name} · {formatDate(article.publishedAt)} · {article.clicks} clicks · {article.views} views
                   </p>
                 </div>
 

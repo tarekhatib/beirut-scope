@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import ArticleContent from "@/components/article/ArticleContent";
 import ShareButtons from "@/components/article/ShareButtons";
+import ViewTracker from "@/components/article/ViewTracker";
 import CategoryBadge from "@/components/ui/CategoryBadge";
 import { getArticleBySlug } from "@/server/queries/articles";
 import { formatDate } from "@/lib/utils";
@@ -88,8 +89,10 @@ export default async function ArticlePage({ params }: Props) {
       {/* Divider */}
       <div className="h-px bg-line mb-8" />
 
-      {/* Article content */}
-      <ArticleContent content={article.content as Parameters<typeof ArticleContent>[0]["content"]} />
+      <div id="article-body">
+        <ArticleContent content={article.content as Parameters<typeof ArticleContent>[0]["content"]} />
+      </div>
+      <ViewTracker slug={article.slug} />
 
       {/* Footer meta */}
       <div className="mt-12 pt-6 border-t border-line flex items-center justify-between">
