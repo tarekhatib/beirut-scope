@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import ArticleContent from "@/components/article/ArticleContent";
+import ShareButtons from "@/components/article/ShareButtons";
 import CategoryBadge from "@/components/ui/CategoryBadge";
 import { getArticleBySlug } from "@/server/queries/articles";
 import { formatDate } from "@/lib/utils";
@@ -64,6 +65,11 @@ export default async function ArticlePage({ params }: Props) {
       <h1 className="text-3xl sm:text-4xl font-bold text-ink leading-tight mb-6">
         {article.title}
       </h1>
+
+      {/* Share buttons */}
+      <div className="mb-8">
+        <ShareButtons title={article.title} />
+      </div>
 
       {/* Cover image */}
       {article.coverImage && (
