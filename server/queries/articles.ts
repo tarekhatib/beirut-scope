@@ -48,6 +48,28 @@ export async function getFeaturedArticles(): Promise<ArticleWithCategory[]> {
   });
 }
 
+export async function getRelatedArticles(categorySlug: string, excludeSlug: string, limit = 3): Promise<ArticleWithCategory[]> {
+  return prisma.article.findMany({
+    where: { category: { slug: categorySlug }, NOT: { slug: excludeSlug } },
+    include: articleInclude,
+    orderBy: { publishedAt: "desc" },
+    take: limit,
+  });
+}
+
+export async function searchArticles(query: string, limit = 20): Promise<ArticleWithCategory[]> {
+  return prisma.article.findMany({
+    where: {
+      OR: [
+        { title: { contains: query, mode: "insensitive" } },
+      ],
+    },
+    include: articleInclude,
+    orderBy: { publishedAt: "desc" },
+    take: limit,
+  });
+}
+
 export async function incrementArticleViews(id: number): Promise<void> {
   await prisma.article.update({ where: { id }, data: { views: { increment: 1 } } });
 }

@@ -6,7 +6,8 @@ import ArticleContent from "@/components/article/ArticleContent";
 import ShareButtons from "@/components/article/ShareButtons";
 import ViewTracker from "@/components/article/ViewTracker";
 import CategoryBadge from "@/components/ui/CategoryBadge";
-import { getArticleBySlug } from "@/server/queries/articles";
+import ArticleCard from "@/components/ui/ArticleCard";
+import { getArticleBySlug, getRelatedArticles } from "@/server/queries/articles";
 import { formatDate } from "@/lib/utils";
 
 export const revalidate = 60;
@@ -35,17 +36,37 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function ArticlePage({ params }: Props) {
   const { category: categorySlug, slug } = await params;
-  const article = await getArticleBySlug(slug);
+  const [article, related] = await Promise.all([
+    getArticleBySlug(slug),
+    getRelatedArticles(categorySlug, slug, 3),
+  ]);
 
   if (!article) notFound();
-
-  // Redirect guard: canonical category must match
   if (article.category.slug !== categorySlug) notFound();
 
-  return (
-    <main className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "NewsArticle",
+    headline: article.title,
+    datePublished: article.publishedAt.toISOString(),
+    dateModified: article.updatedAt.toISOString(),
+    image: article.coverImage ? [article.coverImage] : undefined,
+    articleSection: article.category.name,
+    publisher: {
+      "@type": "Organization",
+      name: "Beirut Scope",
+      url: "https://beirutscope.com",
+    },
+  };
 
-      {/* Breadcrumb */}
+  return (
+    <>
+    <main className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+
       <nav className="text-xs text-ink-muted mb-6 flex items-center gap-1.5">
         <Link href="/" className="hover:text-accent transition-colors">Home</Link>
         <span>/</span>
@@ -56,23 +77,19 @@ export default async function ArticlePage({ params }: Props) {
         <span className="text-ink-soft truncate max-w-50">{article.title}</span>
       </nav>
 
-      {/* Category + meta */}
       <div className="flex flex-wrap items-center gap-3 mb-4">
         <CategoryBadge name={article.category.name} slug={article.category.slug} />
         <time className="text-xs text-ink-muted">{formatDate(article.publishedAt)}</time>
       </div>
 
-      {/* Title */}
       <h1 className="text-3xl sm:text-4xl font-bold text-ink leading-tight mb-6">
         {article.title}
       </h1>
 
-      {/* Share buttons */}
       <div className="mb-8">
         <ShareButtons title={article.title} />
       </div>
 
-      {/* Cover image */}
       {article.coverImage && (
         <div className="relative aspect-video rounded-xl overflow-hidden mb-8">
           <Image
@@ -86,7 +103,6 @@ export default async function ArticlePage({ params }: Props) {
         </div>
       )}
 
-      {/* Divider */}
       <div className="h-px bg-line mb-8" />
 
       <div id="article-body">
@@ -94,7 +110,6 @@ export default async function ArticlePage({ params }: Props) {
       </div>
       <ViewTracker slug={article.slug} />
 
-      {/* Footer meta */}
       <div className="mt-12 pt-6 border-t border-line flex items-center justify-between">
         <Link
           href={`/${article.category.slug}`}
@@ -110,5 +125,22 @@ export default async function ArticlePage({ params }: Props) {
       </div>
 
     </main>
+
+    {related.length > 0 && (
+      <section className={`mx-auto px-4 sm:px-6 lg:px-8 pb-16 ${related.length >= 3 ? "max-w-6xl" : "max-w-3xl"}`}>
+        <div className="border-t border-line pt-12">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="w-1 h-6 bg-accent rounded-full" />
+            <h2 className="text-xl font-bold text-ink">More in {article.category.name}</h2>
+          </div>
+          <div className={`grid gap-5 ${related.length === 1 ? "grid-cols-1" : related.length === 2 ? "grid-cols-1 sm:grid-cols-2" : "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"}`}>
+            {related.map((a) => (
+              <ArticleCard key={a.id} article={a} />
+            ))}
+          </div>
+        </div>
+      </section>
+    )}
+    </>
   );
 }

@@ -34,6 +34,12 @@ export default async function Header() {
           </nav>
 
           <div className="flex items-center gap-1">
+            <Link href="/search" aria-label="Search" className="p-2 text-ink-soft hover:text-ink transition-colors">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="11" cy="11" r="8" />
+                <path d="M21 21l-4.35-4.35" />
+              </svg>
+            </Link>
             <a
               href="https://www.instagram.com/beirutscope"
               target="_blank"
