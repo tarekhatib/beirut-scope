@@ -21,6 +21,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const article = await getArticleBySlug(slug);
   if (!article) return {};
 
+  const images = article.coverImage
+    ? [{ url: article.coverImage, width: 1200, height: 630, alt: article.title }]
+    : undefined;
+
   return {
     title: article.title,
     description: `${article.title} — ${article.category.name}`,
@@ -29,7 +33,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       description: `${article.title} — ${article.category.name}`,
       type: "article",
       publishedTime: article.publishedAt.toISOString(),
-      ...(article.coverImage && { images: [{ url: article.coverImage }] }),
+      ...(images && { images }),
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: article.title,
+      description: `${article.title} — ${article.category.name}`,
+      ...(images && { images: [article.coverImage!] }),
     },
   };
 }
