@@ -8,9 +8,10 @@ import Heading from "@tiptap/extension-heading";
 import Underline from "@tiptap/extension-underline";
 import Link from "@tiptap/extension-link";
 import Image from "@tiptap/extension-image";
-import { useState, useTransition, useRef, useEffect } from "react";
+import { useState, useTransition, useRef, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { createArticle, updateArticle } from "@/server/actions/articles";
+import { slugify } from "@/lib/utils";
 
 interface Category {
   id: number;
@@ -23,6 +24,7 @@ interface Props {
   article?: {
     id: number;
     title: string;
+    slug: string;
     content: object;
     categoryId: number;
     coverImage: string | null;
@@ -145,6 +147,8 @@ export default function ArticleEditor({ categories, article }: Props) {
   const [categoryId, setCategoryId] = useState(article?.categoryId ?? categories[0]?.id ?? 0);
   const [coverImage, setCoverImage] = useState(article?.coverImage ?? "");
   const [isFeatured, setIsFeatured] = useState(article?.isFeatured ?? false);
+  const [slug, setSlug] = useState(article?.slug ?? "");
+  const slugEditedRef = useRef(!!article);
   const [pendingAction, setPendingAction] = useState<"draft" | "publish" | null>(null);
   const [error, setError] = useState("");
   const [isDirty, setIsDirty] = useState(false);
@@ -249,9 +253,14 @@ export default function ArticleEditor({ categories, article }: Props) {
     }
   }
 
+  const sanitizeSlug = useCallback((val: string) =>
+    val.toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9\u0600-\u06FF-]/g, "").replace(/-+/g, "-"), []);
+
   function save(asDraft: boolean) {
     if (!editor) return;
     if (!title.trim()) { setError("Title is required."); return; }
+    const finalSlug = slug.replace(/^-+|-+$/g, "");
+    if (!finalSlug) { setError("Slug is required."); return; }
     setError("");
     const content = JSON.parse(JSON.stringify(editor.getJSON()));
     setPendingAction(asDraft ? "draft" : "publish");
@@ -260,13 +269,13 @@ export default function ArticleEditor({ categories, article }: Props) {
       try {
         if (article) {
           await updateArticle(article.id, {
-            title, content, categoryId: Number(categoryId),
+            title, slug: finalSlug, content, categoryId: Number(categoryId),
             coverImage: coverImage || undefined, isFeatured,
             isDraft: asDraft,
             ...(article.isDraft && !asDraft && { publishedAt: new Date() }),
           });
         } else {
-          await createArticle({ title, content, categoryId: Number(categoryId), coverImage: coverImage || undefined, isFeatured, isDraft: asDraft });
+          await createArticle({ title, slug: finalSlug, content, categoryId: Number(categoryId), coverImage: coverImage || undefined, isFeatured, isDraft: asDraft });
         }
         setIsDirty(false);
         router.push("/admin/articles");
@@ -292,7 +301,12 @@ export default function ArticleEditor({ categories, article }: Props) {
           type="text"
           required
           value={title}
-          onChange={(e) => { setTitle(e.target.value); setIsDirty(true); }}
+          onChange={(e) => {
+            const val = e.target.value;
+            setTitle(val);
+            setIsDirty(true);
+            if (!slugEditedRef.current) setSlug(slugify(val));
+          }}
           placeholder="Article title…"
           className="w-full px-4 py-2.5 rounded-lg border border-line bg-surface text-ink text-sm focus:outline-none focus:ring-2 focus:ring-accent"
         />
@@ -412,6 +426,24 @@ export default function ArticleEditor({ categories, article }: Props) {
 
           <EditorContent editor={editor} />
         </div>
+      </div>
+
+      <div>
+        <label className="block text-sm font-medium text-ink mb-1">
+          Slug
+          <span className="ml-2 text-xs font-normal text-ink-muted">URL: /{"{category}"}/<span className="text-accent">{slug || "…"}</span></span>
+        </label>
+        <input
+          type="text"
+          value={slug}
+          onChange={(e) => {
+            slugEditedRef.current = true;
+            setSlug(sanitizeSlug(e.target.value));
+            setIsDirty(true);
+          }}
+          placeholder="article-slug"
+          className="w-full px-4 py-2.5 rounded-lg border border-line bg-surface text-ink text-sm font-mono focus:outline-none focus:ring-2 focus:ring-accent"
+        />
       </div>
 
       {error && <p className="text-sm text-accent font-medium">{error}</p>}

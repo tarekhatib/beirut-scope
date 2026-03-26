@@ -26,6 +26,7 @@ export default async function EditArticlePage({
         article={{
           id: article.id,
           title: article.title,
+          slug: article.slug,
           content: article.content as object,
           categoryId: article.categoryId,
           coverImage: article.coverImage,
