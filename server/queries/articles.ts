@@ -63,7 +63,7 @@ export async function getRelatedArticles(categorySlug: string, excludeSlug: stri
 export async function searchArticles(query: string, limit = 20): Promise<ArticleWithCategory[]> {
   const pattern = `%${query}%`;
   const rows = await prisma.$queryRaw<Array<{
-    id: number; title: string; slug: string; content: Prisma.JsonValue;
+    id: number; title: string; titleAr: string; slug: string; content: Prisma.JsonValue;
     coverImage: string | null; isFeatured: boolean; isDraft: boolean;
     clicks: number; views: number; publishedAt: Date; updatedAt: Date; categoryId: number;
     cat_id: number; cat_name: string; cat_slug: string; cat_createdAt: Date; cat_updatedAt: Date;
@@ -87,7 +87,7 @@ export async function searchArticles(query: string, limit = 20): Promise<Article
   `;
 
   return rows.map((r) => ({
-    id: r.id, title: r.title, slug: r.slug, content: r.content,
+    id: r.id, title: r.title, titleAr: r.titleAr, slug: r.slug, content: r.content,
     coverImage: r.coverImage, isFeatured: r.isFeatured, isDraft: r.isDraft,
     clicks: r.clicks, views: r.views, publishedAt: r.publishedAt,
     updatedAt: r.updatedAt, categoryId: r.categoryId,
