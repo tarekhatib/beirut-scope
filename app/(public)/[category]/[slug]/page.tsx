@@ -96,9 +96,12 @@ export default async function ArticlePage({ params }: Props) {
         <span className="text-xs text-ink-muted">{readingTime(article.content)} min read</span>
       </div>
 
-      <h1 className="text-3xl sm:text-4xl font-bold text-ink leading-tight mb-6" dir="rtl">
+      <h1 className="text-3xl sm:text-4xl font-bold text-ink leading-tight mb-2" dir="rtl">
         {article.titleAr || article.title}
       </h1>
+      {article.titleAr && (
+        <p className="text-base text-ink-muted mb-6">{article.title}</p>
+      )}
 
       <div className="mb-8">
         <ShareButtons title={article.title} />
