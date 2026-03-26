@@ -33,9 +33,6 @@ export default function ArticleCard({ article, size = "default" }: Props) {
             <h3 className="text-sm font-semibold text-ink leading-snug line-clamp-2 group-hover:text-accent transition-colors" dir="rtl">
               {article.titleAr || article.title}
             </h3>
-            {article.titleAr && (
-              <p className="text-xs text-ink-muted leading-snug line-clamp-1 mt-0.5">{article.title}</p>
-            )}
           </Link>
           <p className="text-xs text-ink-muted mt-1">{formatDate(article.publishedAt)}</p>
         </div>
@@ -69,9 +66,6 @@ export default function ArticleCard({ article, size = "default" }: Props) {
           <h3 className="font-semibold text-ink leading-snug line-clamp-2 group-hover:text-accent transition-colors mt-1" dir="rtl">
             {article.titleAr || article.title}
           </h3>
-          {article.titleAr && (
-            <p className="text-xs text-ink-muted leading-snug line-clamp-1 mt-0.5">{article.title}</p>
-          )}
         </Link>
         <p className="text-xs text-ink-muted">{formatDate(article.publishedAt)}</p>
       </div>

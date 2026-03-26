@@ -222,11 +222,13 @@ export default function FeaturedSlideshow({ articles }: Props) {
           <span className="text-xs text-accent font-semibold uppercase tracking-wide">Featured</span>
         </div>
         <Link href={`/${articles[current].category.slug}/${articles[current].slug}`}>
-          <h1 className="text-lg sm:text-2xl lg:text-3xl font-bold text-ink leading-tight hover:text-accent transition-colors" dir="rtl">
+          <h1 className="text-lg sm:text-2xl lg:text-2xl font-bold text-ink leading-tight hover:text-accent transition-colors" dir="rtl">
             {articles[current].titleAr || articles[current].title}
           </h1>
           {articles[current].titleAr && (
-            <p className="text-sm text-ink-muted mt-1">{articles[current].title}</p>
+            <h2 className="text-lg sm:text-2xl lg:text-2xl font-bold text-ink leading-tight hover:text-accent transition-colors mt-3 lg:mt-6">
+              {articles[current].title}
+            </h2>
           )}
         </Link>
         <p className="text-sm text-ink-muted">{formatDate(articles[current].publishedAt)}</p>
