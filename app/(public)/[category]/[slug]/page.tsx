@@ -25,20 +25,22 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     ? [{ url: article.coverImage, width: 1200, height: 630, alt: article.title }]
     : undefined;
 
+  const displayTitle = article.titleAr || article.title;
+
   return {
-    title: article.title,
-    description: `${article.title} — ${article.category.name}`,
+    title: displayTitle,
+    description: `${displayTitle} — ${article.category.name}`,
     openGraph: {
-      title: article.title,
-      description: `${article.title} — ${article.category.name}`,
+      title: displayTitle,
+      description: `${displayTitle} — ${article.category.name}`,
       type: "article",
       publishedTime: article.publishedAt.toISOString(),
       ...(images && { images }),
     },
     twitter: {
       card: "summary_large_image",
-      title: article.title,
-      description: `${article.title} — ${article.category.name}`,
+      title: displayTitle,
+      description: `${displayTitle} — ${article.category.name}`,
       ...(images && { images: [article.coverImage!] }),
     },
   };
