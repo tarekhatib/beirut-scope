@@ -160,7 +160,7 @@ export default function FeaturedSlideshow({ articles }: Props) {
               {a.coverImage ? (
                 <Image
                   src={a.coverImage}
-                  alt={a.title}
+                  alt={a.titleAr || a.title}
                   fill
                   sizes="(max-width: 1024px) 100vw, 60vw"
                   className="object-cover pointer-events-none"
@@ -223,7 +223,7 @@ export default function FeaturedSlideshow({ articles }: Props) {
         </div>
         <Link href={`/${articles[current].category.slug}/${articles[current].slug}`}>
           <h1 className="text-lg sm:text-2xl lg:text-3xl font-bold text-ink leading-tight hover:text-accent transition-colors">
-            {articles[current].title}
+            {articles[current].titleAr || articles[current].title}
           </h1>
         </Link>
         <p className="text-sm text-ink-muted">{formatDate(articles[current].publishedAt)}</p>

@@ -6,6 +6,7 @@ import { slugify } from "@/lib/utils";
 
 type ArticlePayload = {
   title: string;
+  titleAr?: string;
   slug?: string;
   content: object;
   categoryId: number;
@@ -26,6 +27,7 @@ export async function createArticle(payload: ArticlePayload) {
   const article = await prisma.article.create({
     data: {
       title: payload.title,
+      titleAr: payload.titleAr ?? "",
       slug,
       content: payload.content,
       categoryId: payload.categoryId,
@@ -51,6 +53,7 @@ export async function updateArticle(
   const data: Record<string, unknown> = {};
 
   if (payload.title !== undefined) data.title = payload.title;
+  if (payload.titleAr !== undefined) data.titleAr = payload.titleAr;
   if (payload.content !== undefined) data.content = payload.content;
   if (payload.categoryId !== undefined) data.categoryId = payload.categoryId;
   if (payload.coverImage !== undefined) data.coverImage = payload.coverImage;

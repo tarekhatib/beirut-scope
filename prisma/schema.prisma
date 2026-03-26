@@ -19,6 +19,7 @@ model Category {
 model Article {
   id          Int      @id @default(autoincrement())
   title       String
+  titleAr     String   @default("")
   slug        String   @unique
   content     Json
   coverImage  String?

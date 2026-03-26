@@ -24,6 +24,7 @@ interface Props {
   article?: {
     id: number;
     title: string;
+    titleAr: string;
     slug: string;
     content: object;
     categoryId: number;
@@ -144,6 +145,7 @@ export default function ArticleEditor({ categories, article }: Props) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [title, setTitle] = useState(article?.title ?? "");
+  const [titleAr, setTitleAr] = useState(article?.titleAr ?? "");
   const [categoryId, setCategoryId] = useState(article?.categoryId ?? categories[0]?.id ?? 0);
   const [coverImage, setCoverImage] = useState(article?.coverImage ?? "");
   const [isFeatured, setIsFeatured] = useState(article?.isFeatured ?? false);
@@ -269,13 +271,13 @@ export default function ArticleEditor({ categories, article }: Props) {
       try {
         if (article) {
           await updateArticle(article.id, {
-            title, slug: finalSlug, content, categoryId: Number(categoryId),
+            title, titleAr, slug: finalSlug, content, categoryId: Number(categoryId),
             coverImage: coverImage || undefined, isFeatured,
             isDraft: asDraft,
             ...(article.isDraft && !asDraft && { publishedAt: new Date() }),
           });
         } else {
-          await createArticle({ title, slug: finalSlug, content, categoryId: Number(categoryId), coverImage: coverImage || undefined, isFeatured, isDraft: asDraft });
+          await createArticle({ title, titleAr, slug: finalSlug, content, categoryId: Number(categoryId), coverImage: coverImage || undefined, isFeatured, isDraft: asDraft });
         }
         setIsDirty(false);
         router.push("/admin/articles");
@@ -293,23 +295,39 @@ export default function ArticleEditor({ categories, article }: Props) {
     save(false);
   }
 
+  const previewCategory = categories.find((c) => c.id === Number(categoryId));
+
   return (
-    <form onSubmit={handleSubmit} className="max-w-4xl space-y-6">
-      <div>
-        <label className="block text-sm font-medium text-ink mb-1">Title</label>
-        <input
-          type="text"
-          required
-          value={title}
-          onChange={(e) => {
-            const val = e.target.value;
-            setTitle(val);
-            setIsDirty(true);
-            if (!slugEditedRef.current) setSlug(slugify(val));
-          }}
-          placeholder="Article title…"
-          className="w-full px-4 py-2.5 rounded-lg border border-line bg-surface text-ink text-sm focus:outline-none focus:ring-2 focus:ring-accent"
-        />
+    <div className="flex gap-8 items-start max-w-6xl">
+    <form onSubmit={handleSubmit} className="flex-1 min-w-0 space-y-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+          <label className="block text-sm font-medium text-ink mb-1">Title (English)</label>
+          <input
+            type="text"
+            required
+            value={title}
+            onChange={(e) => {
+              const val = e.target.value;
+              setTitle(val);
+              setIsDirty(true);
+              if (!slugEditedRef.current) setSlug(slugify(val));
+            }}
+            placeholder="Article title in English…"
+            className="w-full px-4 py-2.5 rounded-lg border border-line bg-surface text-ink text-sm focus:outline-none focus:ring-2 focus:ring-accent"
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-ink mb-1">Title (Arabic) — shown to readers</label>
+          <input
+            type="text"
+            value={titleAr}
+            onChange={(e) => { setTitleAr(e.target.value); setIsDirty(true); }}
+            placeholder="عنوان المقالة بالعربية…"
+            dir="rtl"
+            className="w-full px-4 py-2.5 rounded-lg border border-line bg-surface text-ink text-sm focus:outline-none focus:ring-2 focus:ring-accent text-right"
+          />
+        </div>
       </div>
 
       <div className="flex gap-4 flex-wrap">
@@ -480,5 +498,32 @@ export default function ArticleEditor({ categories, article }: Props) {
         </button>
       </div>
     </form>
+
+    <div className="w-64 xl:w-72 shrink-0 sticky top-6 hidden lg:block">
+      <p className="text-xs font-semibold uppercase tracking-wider text-ink-muted mb-3">Preview</p>
+      <div className="rounded-lg border border-line overflow-hidden bg-card">
+        {coverImage ? (
+          <div className="relative aspect-video overflow-hidden">
+            <img src={coverImage} alt="" className="w-full h-full object-cover" />
+          </div>
+        ) : (
+          <div className="aspect-video bg-line flex items-center justify-center">
+            <span className="text-ink-muted text-xs">No image</span>
+          </div>
+        )}
+        <div className="p-3 space-y-1.5">
+          {previewCategory && (
+            <span className="inline-block text-[10px] font-bold uppercase tracking-widest bg-accent text-white px-1.5 py-0.5 rounded">
+              {previewCategory.name}
+            </span>
+          )}
+          <p className="font-semibold text-ink text-sm leading-snug" dir="rtl">
+            {titleAr || <span className="text-ink-muted italic font-normal">Arabic title…</span>}
+          </p>
+          <p className="text-xs text-ink-muted">{new Date().toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}</p>
+        </div>
+      </div>
+    </div>
+    </div>
   );
 }

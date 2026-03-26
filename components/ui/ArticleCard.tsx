@@ -30,8 +30,8 @@ export default function ArticleCard({ article, size = "default" }: Props) {
         )}
         <div className="flex-1 min-w-0">
           <Link href={href}>
-            <h3 className="text-sm font-semibold text-ink leading-snug line-clamp-2 group-hover:text-accent transition-colors">
-              {article.title}
+            <h3 className="text-sm font-semibold text-ink leading-snug line-clamp-2 group-hover:text-accent transition-colors" dir="rtl">
+              {article.titleAr || article.title}
             </h3>
           </Link>
           <p className="text-xs text-ink-muted mt-1">{formatDate(article.publishedAt)}</p>
@@ -63,8 +63,8 @@ export default function ArticleCard({ article, size = "default" }: Props) {
       <div className="p-4 space-y-2">
         <CategoryBadge name={article.category.name} slug={article.category.slug} />
         <Link href={href}>
-          <h3 className="font-semibold text-ink leading-snug line-clamp-2 group-hover:text-accent transition-colors mt-1">
-            {article.title}
+          <h3 className="font-semibold text-ink leading-snug line-clamp-2 group-hover:text-accent transition-colors mt-1" dir="rtl">
+            {article.titleAr || article.title}
           </h3>
         </Link>
         <p className="text-xs text-ink-muted">{formatDate(article.publishedAt)}</p>
