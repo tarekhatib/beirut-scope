@@ -318,7 +318,7 @@ export default function ArticleEditor({ categories, article }: Props) {
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-ink mb-1">Title (Arabic) — shown to readers</label>
+          <label className="block text-sm font-medium text-ink mb-1">Title (Arabic)</label>
           <input
             type="text"
             value={titleAr}
@@ -330,13 +330,13 @@ export default function ArticleEditor({ categories, article }: Props) {
         </div>
       </div>
 
-      <div className="flex gap-4 flex-wrap">
-        <div className="flex-1 min-w-40">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
           <label className="block text-sm font-medium text-ink mb-1">Category</label>
           <select
             value={categoryId}
             onChange={(e) => setCategoryId(Number(e.target.value))}
-            className="w-full px-3 py-2.5 rounded-lg border border-line bg-surface text-ink text-sm focus:outline-none focus:ring-2 focus:ring-accent"
+            className="w-full px-4 py-2.5 rounded-lg border border-line bg-surface text-ink text-sm focus:outline-none focus:ring-2 focus:ring-accent appearance-none"
           >
             {categories.map((cat) => (
               <option key={cat.id} value={cat.id}>{cat.name}</option>
@@ -344,15 +344,31 @@ export default function ArticleEditor({ categories, article }: Props) {
           </select>
         </div>
 
-        <div className="flex-1 min-w-40">
-          <label className="block text-sm font-medium text-ink mb-1">Cover image</label>
+        <div>
+          <div className="flex items-center justify-between mb-1">
+            <label className="block text-sm font-medium text-ink">Cover image</label>
+            <div className="flex items-center gap-2">
+              <span className="text-xs text-ink-muted">Featured</span>
+              <button
+                type="button"
+                role="switch"
+                aria-checked={isFeatured}
+                onClick={() => { setIsFeatured((v) => !v); setIsDirty(true); }}
+                className={`relative inline-flex h-5 w-9 shrink-0 items-center rounded-full transition-colors duration-200 focus:outline-none ${
+                  isFeatured ? "bg-accent" : "bg-ink/20"
+                }`}
+              >
+                <span className={`inline-block h-3.5 w-3.5 rounded-full bg-white shadow transition-transform duration-200 ${isFeatured ? "translate-x-4.5" : "translate-x-0.5"}`} />
+              </button>
+            </div>
+          </div>
           <div className="flex gap-2">
             <input
               type="url"
               value={coverImage}
               onChange={(e) => { setCoverImage(e.target.value); setIsDirty(true); }}
               placeholder="https://… or upload →"
-              className="flex-1 min-w-0 px-3 py-2.5 rounded-lg border border-line bg-surface text-ink text-sm focus:outline-none focus:ring-2 focus:ring-accent"
+              className="flex-1 min-w-0 px-4 py-2.5 rounded-lg border border-line bg-surface text-ink text-sm focus:outline-none focus:ring-2 focus:ring-accent"
             />
             <button
               type="button"
@@ -363,27 +379,6 @@ export default function ArticleEditor({ categories, article }: Props) {
               {coverUploading ? "…" : <Icon d={icons.image} />}
             </button>
             <input ref={coverInputRef} type="file" accept="image/*" className="hidden" onChange={handleCoverUpload} />
-          </div>
-        </div>
-
-        <div className="flex flex-col gap-1">
-          <label className="block text-sm font-medium text-ink">Featured</label>
-          <div className="flex items-center h-10.5">
-            <button
-              type="button"
-              role="switch"
-              aria-checked={isFeatured}
-              onClick={() => { setIsFeatured((v) => !v); setIsDirty(true); }}
-              className={`relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors duration-200 focus:outline-none ${
-                isFeatured ? "bg-accent" : "bg-ink/20"
-              }`}
-            >
-              <span
-                className={`inline-block h-4 w-4 rounded-full bg-white shadow transition-transform duration-200 ${
-                  isFeatured ? "translate-x-6" : "translate-x-1"
-                }`}
-              />
-            </button>
           </div>
         </div>
       </div>

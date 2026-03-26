@@ -85,7 +85,7 @@ export default async function Footer() {
             rel="noopener noreferrer"
             className="text-xs text-ink-muted hover:text-ink-footer transition-colors"
           >
-            Built by @tarekhatib
+            Built by <span className="text-ink-soft">@tarekhatib</span>
           </a>
         </div>
       </div>
