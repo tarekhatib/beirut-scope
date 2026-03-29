@@ -17,7 +17,7 @@ export default async function ArticlesPage() {
 
   return (
     <div className="max-w-5xl">
-      <div className="flex items-center justify-between mb-8">
+      <div className="flex items-center justify-between mb-6 sm:mb-8">
         <div>
           <h1 className="text-2xl font-bold text-ink">Articles</h1>
           <p className="text-sm text-ink-soft mt-1">{articles.length} total</p>
@@ -41,7 +41,7 @@ export default async function ArticlesPage() {
         ) : (
           <ul className="divide-y divide-line">
             {articles.map((article) => (
-              <li key={article.id} className="flex items-center gap-4 px-6 py-4">
+              <li key={article.id} className="flex flex-col sm:flex-row sm:items-center gap-3 px-4 sm:px-6 py-4">
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
                     <p className="text-sm font-medium text-ink truncate">{article.title}</p>
@@ -56,7 +56,7 @@ export default async function ArticlesPage() {
                   </p>
                 </div>
 
-                <div className="flex items-center gap-3 shrink-0">
+                <div className="flex items-center gap-2 shrink-0">
                   <ArticleActions id={article.id} isFeatured={article.isFeatured} />
                   <Link
                     href={`/admin/articles/${article.id}/edit`}
