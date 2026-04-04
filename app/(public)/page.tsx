@@ -4,7 +4,7 @@ import QuickUpdatesSidebar from "@/components/ui/QuickUpdatesSidebar";
 import FeaturedSlideshow from "@/components/ui/FeaturedSlideshow";
 import ArticleCard from "@/components/ui/ArticleCard";
 import { getBreakingUpdates, getQuickUpdates } from "@/server/queries/updates";
-import { getFeaturedArticles, getLatestArticles, getArticlesByCategory } from "@/server/queries/articles";
+import { getFeaturedArticles, getLatestArticles, getArticlesGroupedByCategory } from "@/server/queries/articles";
 import { getCategories } from "@/server/queries/categories";
 
 export const revalidate = 60;
@@ -13,17 +13,19 @@ export default async function HomePage() {
   const [breakingUpdates, sidebarUpdates, featuredArticles, latest, categories] = await Promise.all([
     getBreakingUpdates(10),
     getQuickUpdates(2),
-    getFeaturedArticles(),
+    getFeaturedArticles(10),
     getLatestArticles(6),
     getCategories(),
   ]);
 
-  const categorySections = await Promise.all(
-    categories.map(async (cat) => ({
-      category: cat,
-      articles: await getArticlesByCategory(cat.slug, 3),
-    }))
+  const groupedArticles = await getArticlesGroupedByCategory(
+    categories.map((c) => c.slug),
+    3
   );
+
+  const categorySections = categories
+    .map((cat) => ({ category: cat, articles: groupedArticles[cat.slug] ?? [] }))
+    .filter((s) => s.articles.length > 0);
 
   return (
     <>
@@ -61,9 +63,7 @@ export default async function HomePage() {
           </section>
         )}
 
-        {categorySections
-          .filter((s) => s.articles.length > 0)
-          .map(({ category, articles }) => (
+        {categorySections.map(({ category, articles }) => (
             <section key={category.id}>
               <div className="flex items-center justify-between mb-5">
                 <div className="flex items-center gap-3">

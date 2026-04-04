@@ -156,7 +156,7 @@ export default function FeaturedSlideshow({ articles }: Props) {
             ref={(el) => { slideEls.current[i] = el; }}
             className="absolute inset-0"
           >
-            <Link href={`/${a.category.slug}/${a.slug}`} className="block w-full h-full" draggable={false}>
+            <Link href={`/${a.category.slug}/${a.slug}`} className="relative block w-full h-full" draggable={false}>
               {a.coverImage ? (
                 <Image
                   src={a.coverImage}

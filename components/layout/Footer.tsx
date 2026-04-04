@@ -72,6 +72,21 @@ export default async function Footer() {
                   Live Updates
                 </Link>
               </li>
+              <li>
+                <Link href="/about" className="text-sm text-ink-footer hover:text-accent transition-colors">
+                  About Us
+                </Link>
+              </li>
+              <li>
+                <Link href="/contact" className="text-sm text-ink-footer hover:text-accent transition-colors">
+                  Contact
+                </Link>
+              </li>
+              <li>
+                <Link href="/privacy-policy" className="text-sm text-ink-footer hover:text-accent transition-colors">
+                  Privacy Policy
+                </Link>
+              </li>
             </ul>
           </div>
 

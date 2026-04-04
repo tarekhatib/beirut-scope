@@ -50,6 +50,15 @@ export default function MobileNav({ categories }: { categories: Category[] }) {
               {cat.name}
             </Link>
           ))}
+          <div className="border-t border-line mt-1 pt-1">
+            <Link
+              href="/contact"
+              onClick={() => setOpen(false)}
+              className="block px-4 py-2 text-sm text-ink-soft hover:text-accent hover:bg-page transition-colors"
+            >
+              Contact
+            </Link>
+          </div>
         </nav>
       )}
     </div>

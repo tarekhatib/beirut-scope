@@ -43,12 +43,38 @@ export async function getArticleBySlug(slug: string): Promise<ArticleWithCategor
   return prisma.article.findUnique({ where: { slug, isDraft: false }, include: articleInclude });
 }
 
-export async function getFeaturedArticles(): Promise<ArticleWithCategory[]> {
+export async function getFeaturedArticles(limit = 10): Promise<ArticleWithCategory[]> {
   return prisma.article.findMany({
     where: { isDraft: false, isFeatured: true },
     include: articleInclude,
     orderBy: { publishedAt: "desc" },
+    take: limit,
   });
+}
+
+export async function getArticlesGroupedByCategory(
+  categorySlugs: string[],
+  perCategory = 3
+): Promise<Record<string, ArticleWithCategory[]>> {
+  if (categorySlugs.length === 0) return {};
+
+  const articles = await prisma.article.findMany({
+    where: {
+      isDraft: false,
+      category: { slug: { in: categorySlugs } },
+    },
+    include: articleInclude,
+    orderBy: { publishedAt: "desc" },
+    take: categorySlugs.length * perCategory * 4,
+  });
+
+  const grouped: Record<string, ArticleWithCategory[]> = {};
+  for (const article of articles) {
+    const slug = article.category.slug;
+    if (!grouped[slug]) grouped[slug] = [];
+    if (grouped[slug].length < perCategory) grouped[slug].push(article);
+  }
+  return grouped;
 }
 
 export async function getRelatedArticles(categorySlug: string, excludeSlug: string, limit = 3): Promise<ArticleWithCategory[]> {

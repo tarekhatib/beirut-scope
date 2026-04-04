@@ -32,6 +32,13 @@ export default async function Header() {
                 {cat.name}
               </Link>
             ))}
+            <span className="w-px h-4 bg-line mx-1" />
+            <Link
+              href="/contact"
+              className="px-3 py-1.5 text-sm font-medium text-ink-soft hover:text-accent transition-colors rounded"
+            >
+              Contact
+            </Link>
           </nav>
 
           <div className="flex items-center gap-1">

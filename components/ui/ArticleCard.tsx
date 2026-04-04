@@ -16,7 +16,7 @@ export default function ArticleCard({ article, size = "default" }: Props) {
     return (
       <article className="flex gap-3 group">
         {article.coverImage && (
-          <Link href={href} className="flex-shrink-0">
+          <Link href={href} className="shrink-0">
             <div className="relative w-20 h-16 rounded overflow-hidden">
               <Image
                 src={article.coverImage}
