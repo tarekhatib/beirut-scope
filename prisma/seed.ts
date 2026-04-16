@@ -10,6 +10,7 @@ const categories = [
   { name: "Security", slug: "security" },
   { name: "World", slug: "world" },
   { name: "Sport", slug: "sport" },
+  { name: "Weather", slug: "weather" },
 ];
 
 async function main() {
