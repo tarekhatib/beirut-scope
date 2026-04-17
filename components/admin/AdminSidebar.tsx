@@ -10,6 +10,7 @@ const navItems = [
   { label: "Dashboard", href: "/admin" },
   { label: "Articles", href: "/admin/articles" },
   { label: "Updates", href: "/admin/updates" },
+  { label: "Ads", href: "/admin/ads" },
 ];
 
 export default function AdminSidebar() {

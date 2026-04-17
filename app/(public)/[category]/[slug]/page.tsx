@@ -3,11 +3,13 @@ import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import ArticleContent from "@/components/article/ArticleContent";
+import ArticleAd from "@/components/article/ArticleAd";
 import ShareButtons from "@/components/article/ShareButtons";
 import ViewTracker from "@/components/article/ViewTracker";
 import CategoryBadge from "@/components/ui/CategoryBadge";
 import ArticleCard from "@/components/ui/ArticleCard";
 import { getArticleBySlug, getRelatedArticles } from "@/server/queries/articles";
+import { getAdsForArticle } from "@/server/queries/ads";
 import { formatDate, readingTime } from "@/lib/utils";
 
 export const revalidate = 60;
@@ -56,6 +58,11 @@ export default async function ArticlePage({ params }: Props) {
   if (!article) notFound();
   if (article.category.slug !== categorySlug) notFound();
 
+  const adsByPosition = await getAdsForArticle(article.id);
+  const ad1 = adsByPosition.get(1);
+  const ad2 = adsByPosition.get(2);
+  const ad3 = adsByPosition.get(3);
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "NewsArticle",
@@ -89,6 +96,9 @@ export default async function ArticlePage({ params }: Props) {
         <span className="text-ink-soft truncate max-w-50">{article.title}</span>
       </nav>
 
+      {/* Position 1 — above title */}
+      {ad1 && <ArticleAd imageUrl={ad1.imageUrl} linkUrl={ad1.linkUrl} text={ad1.text} />}
+
       <div className="flex flex-wrap items-center gap-3 mb-4">
         <CategoryBadge name={article.category.name} slug={article.category.slug} />
         <time className="text-xs text-ink-muted">{formatDate(article.publishedAt)}</time>
@@ -103,12 +113,8 @@ export default async function ArticlePage({ params }: Props) {
         <p className="text-base text-ink-muted mb-6">{article.title}</p>
       )}
 
-      <div className="mb-8">
-        <ShareButtons title={article.title} />
-      </div>
-
       {article.coverImage && (
-        <div className="relative aspect-video rounded-xl overflow-hidden mb-8">
+        <div className="relative aspect-video rounded-xl overflow-hidden mb-6">
           <Image
             src={article.coverImage}
             alt={article.title}
@@ -120,10 +126,39 @@ export default async function ArticlePage({ params }: Props) {
         </div>
       )}
 
+      {/* Share buttons below cover image — visual separator before content */}
+      <div className="mb-8">
+        <ShareButtons title={article.title} />
+      </div>
+
+      {/* Position 2 — before content */}
+      {ad2 && <ArticleAd imageUrl={ad2.imageUrl} linkUrl={ad2.linkUrl} text={ad2.text} />}
+
       <div className="h-px bg-line mb-8" />
 
       <div id="article-body">
-        <ArticleContent content={article.content as Parameters<typeof ArticleContent>[0]["content"]} />
+        {(() => {
+          type ContentNode = Parameters<typeof ArticleContent>[0]["content"];
+          const doc = article.content as { type: string; content?: unknown[] };
+          const nodes = doc.content ?? [];
+
+          if (!ad3 || nodes.length < 4) {
+            return <ArticleContent content={article.content as ContentNode} />;
+          }
+
+          // Position 3 — split content at midpoint
+          const mid = Math.ceil(nodes.length / 2);
+          const firstHalf = { type: "doc", content: nodes.slice(0, mid) } as ContentNode;
+          const secondHalf = { type: "doc", content: nodes.slice(mid) } as ContentNode;
+
+          return (
+            <>
+              <ArticleContent content={firstHalf} />
+              <ArticleAd imageUrl={ad3.imageUrl} linkUrl={ad3.linkUrl} text={ad3.text} />
+              <ArticleContent content={secondHalf} />
+            </>
+          );
+        })()}
       </div>
       <ViewTracker slug={article.slug} />
 

@@ -17,23 +17,49 @@ model Category {
 }
 
 model Article {
-  id          Int      @id @default(autoincrement())
+  id          Int           @id @default(autoincrement())
   title       String
-  titleAr     String   @default("")
-  slug        String   @unique
+  titleAr     String        @default("")
+  slug        String        @unique
   content     Json
   coverImage  String?
-  isFeatured  Boolean  @default(false)
-  isDraft     Boolean  @default(false)
-  clicks      Int      @default(0)
-  views       Int      @default(0)
-  publishedAt DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  isFeatured  Boolean       @default(false)
+  isDraft     Boolean       @default(false)
+  clicks      Int           @default(0)
+  views       Int           @default(0)
+  publishedAt DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
   categoryId  Int
-  category    Category @relation(fields: [categoryId], references: [id])
+  category    Category      @relation(fields: [categoryId], references: [id])
+  ads         AdOnArticle[]
 
   @@index([categoryId])
   @@index([publishedAt])
+}
+
+model Ad {
+  id        Int           @id @default(autoincrement())
+  imageUrl  String
+  linkUrl   String
+  text      String?
+  position  Int           @default(2) // 1=above title, 2=before content, 3=mid content
+  expiresAt DateTime?
+  showOnAll Boolean       @default(true)
+  isActive  Boolean       @default(true)
+  articles  AdOnArticle[]
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+
+  @@index([position])
+}
+
+model AdOnArticle {
+  adId      Int
+  articleId Int
+  ad        Ad      @relation(fields: [adId], references: [id], onDelete: Cascade)
+  article   Article @relation(fields: [articleId], references: [id], onDelete: Cascade)
+
+  @@id([adId, articleId])
 }
 
 model QuickUpdate {
