@@ -42,8 +42,7 @@ model Ad {
   imageUrl  String
   linkUrl   String
   text      String?
-  position  Int           @default(2) // 1=above title, 2=before content, 3=mid content
-  expiresAt DateTime?
+  position  Int           @default(2)
   showOnAll Boolean       @default(true)
   isActive  Boolean       @default(true)
   articles  AdOnArticle[]

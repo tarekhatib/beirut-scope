@@ -11,6 +11,7 @@ const categories = [
   { name: "World", slug: "world" },
   { name: "Sport", slug: "sport" },
   { name: "Weather", slug: "weather" },
+  { name: "History", slug: "history" },
 ];
 
 async function main() {
