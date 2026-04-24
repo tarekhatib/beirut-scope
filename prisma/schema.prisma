@@ -45,6 +45,7 @@ model Ad {
   position  Int           @default(2)
   showOnAll Boolean       @default(true)
   isActive  Boolean       @default(true)
+  expiresAt DateTime?
   articles  AdOnArticle[]
   createdAt DateTime      @default(now())
   updatedAt DateTime      @updatedAt
