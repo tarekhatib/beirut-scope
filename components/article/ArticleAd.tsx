@@ -16,14 +16,16 @@ export default function ArticleAd({ imageUrl, linkUrl, text }: Props) {
         rel="noopener noreferrer sponsored"
         className="block rounded-xl overflow-hidden border border-line hover:opacity-90 transition-opacity"
       >
-        <Image
-          src={imageUrl}
-          alt="Advertisement"
-          width={0}
-          height={0}
-          sizes="(max-width: 768px) 100vw, 768px"
-          style={{ width: "100%", height: "auto", display: "block" }}
-        />
+        <div className="relative aspect-4/3 w-full">
+          <Image
+            src={imageUrl}
+            alt="Advertisement"
+            fill
+            sizes="(max-width: 768px) 100vw, 768px"
+            className="object-cover"
+            unoptimized={imageUrl.startsWith("http")}
+          />
+        </div>
         {text && (
           <div className="px-4 py-3 bg-surface border-t border-line">
             <p className="text-sm text-ink">{text}</p>
