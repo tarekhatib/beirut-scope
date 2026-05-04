@@ -56,12 +56,21 @@ const Iframe = Node.create({
   },
   addNodeView() {
     return ({ node }) => {
+      const src = node.attrs.src as string;
+      const isTwitter = src?.includes("platform.twitter.com");
       const wrap = document.createElement("div");
+      wrap.className = isTwitter ? "flex justify-center my-4" : "my-4";
       const iframe = document.createElement("iframe");
-      iframe.src = node.attrs.src;
+      iframe.src = src;
       iframe.style.border = "none";
       iframe.allowFullscreen = true;
-      iframe.className = "w-full aspect-video rounded-lg my-4";
+      if (isTwitter) {
+        iframe.className = "w-full rounded-lg";
+        iframe.style.maxWidth = "500px";
+        iframe.style.height = "500px";
+      } else {
+        iframe.className = "w-full aspect-video rounded-lg";
+      }
       wrap.appendChild(iframe);
       return { dom: wrap };
     };
@@ -86,6 +95,8 @@ const IMAGE_EXTENSIONS = /\.(jpe?g|png|gif|webp|svg|avif)(\?.*)?$/i;
 function toEmbedUrl(raw: string): string {
   const yt = raw.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\s]+)/);
   if (yt) return `https://www.youtube.com/embed/${yt[1]}`;
+  const tw = raw.match(/(?:twitter\.com|x\.com)\/(?:i\/status|[^/]+\/status)\/(\d+)/);
+  if (tw) return `https://platform.twitter.com/embed/Tweet.html?id=${tw[1]}`;
   return raw;
 }
 

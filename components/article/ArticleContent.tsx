@@ -64,12 +64,19 @@ function renderNode(node: Node, i: number): ReactNode {
         <img key={i} src={node.attrs?.src as string} alt={(node.attrs?.alt as string) ?? ""} loading="lazy" className="rounded-lg max-w-full mx-auto my-4" />
       );
 
-    case "iframe":
-      return (
+    case "iframe": {
+      const src = node.attrs?.src as string;
+      const isTwitter = src?.includes("platform.twitter.com");
+      return isTwitter ? (
+        <div key={i} className="my-4 flex justify-center">
+          <iframe src={src} className="w-full max-w-lg rounded-lg border-0" style={{ height: "500px" }} />
+        </div>
+      ) : (
         <div key={i} className="relative w-full aspect-video my-4">
-          <iframe src={node.attrs?.src as string} className="w-full h-full rounded-lg border-0" allowFullScreen />
+          <iframe src={src} className="w-full h-full rounded-lg border-0" allowFullScreen />
         </div>
       );
+    }
 
     default: return null;
   }
